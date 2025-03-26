@@ -1,0 +1,19 @@
+body .text-primary {
+    color: #E30019 !important
+}
+
+.fruite-item {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    /* Giúp các thẻ có chiều cao bằng nhau */
+}
+
+.fruite-item .p-4 {
+    flex-grow: 1;
+    /* Đẩy phần nội dung phía dưới xuống */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* Căn phần tên, mô tả, giá và nút */
+}
