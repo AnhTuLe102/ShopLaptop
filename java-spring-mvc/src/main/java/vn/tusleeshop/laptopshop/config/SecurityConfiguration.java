@@ -90,7 +90,22 @@ public class SecurityConfiguration {
                         .failureUrl("/login?error")
                         .successHandler(myAuthenticationSuccessHandler())
                         .permitAll())
-                .exceptionHandling(ex -> ex.accessDeniedPage("/access-deny"));
+                .exceptionHandling(ex -> ex.accessDeniedPage("/access-deny"))
+
+                 // ✅ THÊM PHẦN NÀY FIX LỖI CPS Header Not Set
+                .headers(headers -> headers
+                    .contentSecurityPolicy(csp -> csp
+                        .policyDirectives("default-src 'self'; " +
+                                        "script-src 'self' https://ajax.googleapis.com https://cdn.jsdelivr.net https://use.fontawesome.com; " +
+                                        "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://use.fontawesome.com; " +
+                                        "img-src 'self' data: https://cdn.jsdelivr.net; " +
+                                        "font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com https://use.fontawesome.com; " +
+                                        "connect-src 'self'; " +
+                                        "form-action 'self'; " +
+                                        "object-src 'none'; " +
+                                        "frame-ancestors 'none';")
+                    )
+                );
 
         return http.build();
     }
