@@ -66,21 +66,31 @@ public class HomePageController {
     public String postMethodName(@ModelAttribute("registerUser") @Valid RegisterDTO registerDTO,
             BindingResult bindingResult) {
 
-        // List<FieldError> errors = bindingResult.getFieldErrors();
-        // for (FieldError error : errors) {
-        // System.out.println(">>>>" + error.getField() + " - " +
-        // error.getDefaultMessage());
-        // }
+        // Kiểm tra lỗi validation
         if (bindingResult.hasErrors()) {
             return "client/auth/register";
         }
 
-        User user = this.userService.registerDTOtoUser(registerDTO);
-        String hashPassword = this.passwordEncoder.encode(user.getPassword());
-        user.setPassword(hashPassword);
-        user.setRole(this.userService.getRoleByname("USER"));
-        this.userService.handleSaveUser(user);
-        return "redirect:/login";
+        try {
+            // Chuyển đổi từ DTO sang User
+            User user = this.userService.registerDTOtoUser(registerDTO);
+
+            // Mã hóa mật khẩu
+            String hashPassword = this.passwordEncoder.encode(user.getPassword());
+            user.setPassword(hashPassword);
+
+            // Gán role mặc định
+            user.setRole(this.userService.getRoleByname("USER"));
+
+            // Lưu user vào DB
+            this.userService.handleSaveUser(user);
+
+            return "redirect:/login";
+        } catch (Exception e) {
+            // Nếu có lỗi, quay lại trang đăng ký
+            bindingResult.rejectValue("email", "error.user", "Đã xảy ra lỗi khi đăng ký. Vui lòng thử lại sau.");
+            return "client/auth/register";
+        }
     }
 
     @GetMapping("/login")
